@@ -4,7 +4,7 @@ import {View, Button, Text, StyleSheet} from "react-native";
 
 export default function WishListScreen({navigation}) {
     return (
-        <View style={StyleSheet.container}>
+        <View style={styles.container}>
             <Text>WishList screen</Text>
         </View>
     );
