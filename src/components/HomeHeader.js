@@ -1,14 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import {View, Text, StyleSheet, Platform} from 'react-native';
-import { color } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import SwitchBtn from './SwitchBtn';
 
 export default function HomeHeader() {
+    const [audio, setAudio] = useState(false)
+    const toogleAudio = () => {
+        setAudio(previousState=>!previousState)
+    }
     return (
         <View style={styles.header}>
             <Text style={styles.text}>Home</Text>
             <View style={styles.switch}>
-
+                <SwitchBtn isAudio={audio} toogleAudio={toogleAudio}/>
             </View>
         </View>
     );
@@ -16,9 +20,9 @@ export default function HomeHeader() {
 
 const styles = StyleSheet.create({
     header: {
-        height: 155,
+        height: Platform.OS === 'android' ? 148 : 130,
         backgroundColor: '#212237',
-        paddingTop: Platform.OS === 'android' ? 40 :  20,
+        paddingTop: Platform.OS === 'android' ? 40 : 20,
         paddingHorizontal: 20
     },
     text: {
@@ -26,6 +30,7 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     switch: {
-
+        marginTop: 18,
+        alignItems: 'center',
     }
 });

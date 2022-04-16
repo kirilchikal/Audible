@@ -12,7 +12,7 @@ export default function BaseHeader({title}) {
 
 const styles = StyleSheet.create({
     header: {
-        height: 95,
+        height: Platform.OS === 'android' ? 95 : 80,
         backgroundColor: '#212237',
         paddingTop: Platform.OS === 'android' ? 40 :  20,
         paddingHorizontal: 20

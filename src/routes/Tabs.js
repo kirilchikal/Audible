@@ -1,3 +1,4 @@
+import React, {useState} from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { View, Text, Image} from "react-native";
@@ -22,11 +23,12 @@ export default function Tabs() {
             // headerShown: false,
             tabBarStyle: {
                 height: 65,
-                paddingTop: 5,
-                backgroundColor: '#212237'
+                paddingTop: 4,
+                backgroundColor: '#212237',
+                borderTopWidth: 0,
             }
         }}>
-            <Tab.Screen name="Home" component={HomeScreen} options={{
+            <Tab.Screen name="Home" children={()=><HomeScreen name='test from tab.navigation'/>} options={{
                 tabBarIcon: ({focused}) => (
                     <View >
                         <Feather name='home' size={32} color={focused ? '#F5A932' : '#666666'}/>
