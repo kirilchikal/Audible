@@ -3,16 +3,13 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Platform} from 'react-native';
 import SwitchBtn from './SwitchBtn';
 
-export default function HomeHeader() {
-    const [audio, setAudio] = useState(false)
-    const toogleAudio = () => {
-        setAudio(previousState=>!previousState)
-    }
+export default function HomeHeader(props) {
+    
     return (
         <View style={styles.header}>
             <Text style={styles.text}>Home</Text>
             <View style={styles.switch}>
-                <SwitchBtn isAudio={audio} toogleAudio={toogleAudio}/>
+                <SwitchBtn isAudio={props.audio} toogleAudio={props.toogle}/>
             </View>
         </View>
     );
