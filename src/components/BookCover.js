@@ -1,6 +1,5 @@
 import React from "react";
 import {Text, StyleSheet, Image, View} from "react-native";
-import bookList from "../Data/bookList";
 
 
 export default function BookCover(props) {

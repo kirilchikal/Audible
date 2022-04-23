@@ -4,7 +4,7 @@ const bookList = [
     title: 'One Italian summer',
     author:'Rebeca Serle',
     description: 'The New York Times bestselling author of In Five Years returns with a powerful novel about the transformational love between mothers and daughters set on the breathtaking Amalfi Coast. When Katy’s mother dies, she is left reeling. Carol wasn’t just Katy’s mom, but her best friend and first phone call. She had all the answers and now, when Katy needs her the most, she is gone. To make matters worse, their planned mother-daughter trip of a lifetime looms: to Positano, the magical town where Carol spent the summer right before she met Katy’s father.',
-    rating:4,
+    rating:4.5,
     price:16.08,
     category:'Romance',
     image_url:"https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1626799802i/58438583.jpg",

@@ -12,6 +12,9 @@ const categoryList = [
     {
       name: 'History',
     },
+    {
+      name: 'Children',
+    },
   ];
 export default categoryList;
 

@@ -27,6 +27,7 @@ export default function HomeScreen(props,{navigation}) {
                 <View style={styles.horizontal}>
                     <Text style={styles.scrollTitle}>Best sellers</Text>
                     <FlatList 
+                        showsHorizontalScrollIndicator={false}
                         style={styles.list}
                         horizontal={true}
                         data={books}
@@ -37,6 +38,7 @@ export default function HomeScreen(props,{navigation}) {
                 <View style={styles.horizontal}>
                     <Text style={styles.scrollTitle}>New</Text>
                     <FlatList 
+                        showsHorizontalScrollIndicator={false}
                         style={styles.list}
                         horizontal={true}
                         data={[].concat(books).reverse()}
@@ -47,6 +49,7 @@ export default function HomeScreen(props,{navigation}) {
                 <View style={styles.horizontal}>
                     <Text style={styles.scrollTitle}>Popular authors</Text>
                     <FlatList 
+                        showsHorizontalScrollIndicator={false}
                         style={styles.list}
                         horizontal={true}
                         data={authorList}

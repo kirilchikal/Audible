@@ -15,7 +15,7 @@ export default function SearchHeader() {
 
 const styles = StyleSheet.create({
     header: {
-        height: Platform.OS === 'android' ? 148 : 130,
+        height: Platform.OS === 'android' ? 90 : 75,
         backgroundColor: '#212237',
         paddingTop: Platform.OS === 'android' ? 40 :  20,
         paddingHorizontal: 20
