@@ -16,7 +16,7 @@ import SearchHeader from "../components/SearchHeader";
 
 const Tab = createBottomTabNavigator();
 
-export default function Tabs() {
+export default function Tabs({navigation}) {
     const [audio, setAudio] = useState(false)
     const toogleAudio = () => {
         setAudio(previousState=>!previousState)
@@ -32,7 +32,7 @@ export default function Tabs() {
                 borderTopWidth: 0,
             }
         }}>
-            <Tab.Screen name="Home" children={()=><HomeScreen isAudio={audio}/>} options={{
+            <Tab.Screen name="Home" children={()=><HomeScreen isAudio={audio} nav={navigation}/>} options={{
                 tabBarIcon: ({focused}) => (
                     <View >
                         <Feather name='home' size={32} color={focused ? '#F5A932' : '#666666'}/>

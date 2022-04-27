@@ -9,7 +9,8 @@ import authorList from "../Data/authorList";
 
 export default function HomeScreen(props,{navigation}) {
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={{marginRight:10}} onPress={{}}>
+        <TouchableOpacity style={{marginRight:10}} 
+                onPress={() => props.nav.navigate('BookDetailsScreen', { item })}>
             <BookCover book={item}/>
         </TouchableOpacity>
     );

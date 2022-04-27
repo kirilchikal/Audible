@@ -12,6 +12,7 @@ export default function SignInScreen({navigation}) {
         <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
             <Text>Sign in</Text>
         </TouchableOpacity>
+
         </View>
       </SafeAreaView>
     );
