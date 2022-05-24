@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -10,13 +10,108 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { db } from "../../firebase";
 
 import BookCover from "../components/BookCover";
+import { addBook } from "../redux/actions/book";
+import { addCart } from "../redux/actions/cart";
+import { addFavourite } from "../redux/actions/favourite";
 
-import bookList from "../Data/bookList";
-import authorList from "../Data/authorList";
+//FIREBASE HELPERS
+function getBookTitle(documentSnapshot) {
+  return documentSnapshot.get("title");
+}
+function getBookAudio(documentSnapshot) {
+  return documentSnapshot.get("audio");
+}
+function getBookAuthor(documentSnapshot) {
+  return documentSnapshot.get("author");
+}
+function getBookCategory(documentSnapshot) {
+  return documentSnapshot.get("category");
+}
+
+function getBookDescription(documentSnapshot) {
+  return documentSnapshot.get("description");
+}
+
+function getBookImage(documentSnapshot) {
+  return documentSnapshot.get("image_url");
+}
+
+function getBookPrice(documentSnapshot) {
+  return documentSnapshot.get("price");
+}
+
+function getBookRating(documentSnapshot) {
+  return documentSnapshot.get("rating");
+}
+
+function getCartBooks(documentSnapshot) {
+  return documentSnapshot.get("books");
+}
+
+function getFavouriteBooks(documentSnapshot) {
+  return documentSnapshot.get("books");
+}
+//FIREBASE HELPERS
 
 export default function HomeScreen(props, { navigation }) {
+  const dispatch = useDispatch();
+
+  //FIREBASE
+  const fetchBooks = async () => {
+    const response = db.collection("Books");
+    const data = await response.get();
+    data.docs.forEach((item) => {
+      const book = {};
+      book.id = item.id;
+      book.audio = getBookAudio(item);
+      book.title = getBookTitle(item);
+      book.author = getBookAuthor(item);
+      book.category = getBookCategory(item);
+      book.description = getBookDescription(item);
+      book.price = getBookPrice(item);
+      book.rating = getBookRating(item);
+      book.image_url = getBookImage(item);
+
+      dispatch(addBook(book));
+    });
+  };
+
+  const fetchCart = async () => {
+    const response = db.collection("Cart");
+    const data = await response.get();
+    const carts = [];
+    data.docs.forEach((item) => {
+      carts.push(getCartBooks(item));
+    });
+    carts[0].forEach((bookId) => dispatch(addCart(bookId)));
+  };
+
+  const fetchFavourite = async () => {
+    const response = db.collection("Favourite");
+    const data = await response.get();
+    const favourite = [];
+    data.docs.forEach((item) => {
+      favourite.push(getFavouriteBooks(item));
+    });
+    favourite[0].forEach((bookId) => dispatch(addFavourite(bookId)));
+  };
+
+  useEffect(() => {
+    fetchBooks();
+    fetchFavourite();
+    fetchCart();
+  }, []);
+  //FIREBASE END
+
+  //redux
+  const booksList = useSelector((state) => state.bookReducer.bookList);
+  const authorsList = useSelector((state) => state.authorReducer.authorList);
+  //
+
   const [load, setLoad] = useState(true);
   const [loadingCount, setLoadingCount] = useState(0);
   const plusLoad = () => {
@@ -48,8 +143,8 @@ export default function HomeScreen(props, { navigation }) {
   );
 
   const books = props.isAudio
-    ? bookList.filter((b) => b.audio === true)
-    : bookList.filter((b) => b.audio === false);
+    ? booksList.filter((b) => b.audio === true)
+    : booksList.filter((b) => b.audio === false);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -82,7 +177,7 @@ export default function HomeScreen(props, { navigation }) {
             showsHorizontalScrollIndicator={false}
             style={styles.list}
             horizontal={true}
-            data={[].concat(books).reverse()}
+            data={books}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
           />
@@ -93,7 +188,7 @@ export default function HomeScreen(props, { navigation }) {
             showsHorizontalScrollIndicator={false}
             style={styles.list}
             horizontal={true}
-            data={authorList}
+            data={authorsList}
             renderItem={renderItem2}
             keyExtractor={(item) => item.id}
           />

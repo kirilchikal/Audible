@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, Image, View, Alert } from "react-native";
+import { Text, StyleSheet, Image, View } from "react-native";
 
 export default function BookCover(props) {
   return (

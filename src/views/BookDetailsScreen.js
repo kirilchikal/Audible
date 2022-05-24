@@ -10,15 +10,91 @@ import {
 } from "react-native";
 import Rating from "../components/Rating";
 import { FontAwesome } from "@expo/vector-icons";
-import { Button } from "react-native-web";
+import { useDispatch, useSelector } from "react-redux";
+import { addCart, deleteCart } from "../redux/actions/cart";
+import { addFavourite, deleteFavourite } from "../redux/actions/favourite";
+import { db } from "../../firebase";
+import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function BookDetailsScreen({ route, navigation }) {
-  const { item } = route.params;
-  const [marked, setMarked] = useState(false);
+  // Redux & firebase actions
+  const addToCartFB = async (key) => {
+    console.log(key);
+    const cartRef = doc(db, "Cart", "0");
+    await updateDoc(cartRef, {
+      books: arrayUnion(key),
+    });
+  };
 
+  const addToFavouriteFB = async (key) => {
+    console.log(key);
+    const cartRef = doc(db, "Favourite", "0");
+    await updateDoc(cartRef, {
+      books: arrayUnion(key),
+    });
+  };
+
+  const removeFromCartFB = async (key) => {
+    console.log(key);
+    const cartRef = doc(db, "Cart", "0");
+    await updateDoc(cartRef, {
+      books: arrayRemove(key),
+    });
+  };
+
+  const removeFromFavouriteFB = async (key) => {
+    console.log(key);
+    const cartRef = doc(db, "Favourite", "0");
+    await updateDoc(cartRef, {
+      books: arrayRemove(key),
+    });
+  };
+
+  //Dispatcher
+  const dispatch = useDispatch();
+  const addToCart = (key) => {
+    dispatch(addCart(key));
+    addToCartFB(key);
+  };
+  const removeFromCart = (key) => {
+    dispatch(deleteCart(key));
+    removeFromCartFB(key);
+  };
+  const addToFavourite = (key) => {
+    dispatch(addFavourite(key));
+    addToFavouriteFB(key);
+  };
+  const removeFromFavourite = (key) => {
+    dispatch(deleteFavourite(key));
+    removeFromFavouriteFB(key);
+  };
+
+  const favouriteList = useSelector(
+    (state) => state.favouriteReducer.favouriteList
+  );
+  const cartList = useSelector((state) => state.cartReducer.cartList);
+
+  const { item } = route.params;
+  const [marked, setMarked] = useState(favouriteList.includes(item.id));
+  const [carted, setCarted] = useState(cartList.includes(item.id));
+  // console.log("Item loaded");
+
+  // Changed by redux
   const addToWishList = () => {
-    setMarked(true);
-    //ADD TO WHISH LIST
+    setMarked(!marked);
+    if (!marked) {
+      addToFavourite(item.id);
+    } else {
+      removeFromFavourite(item.id);
+    }
+  };
+  const addToCartList = () => {
+    setCarted(!carted);
+    if (!carted) {
+      addToCart(item.id);
+    } else {
+      removeFromCart(item.id);
+    }
   };
 
   return (
@@ -40,7 +116,13 @@ export default function BookDetailsScreen({ route, navigation }) {
               ]}
             >
               <Image source={require("../../assets/audio.png")} />
-              <Text style={{ color: "#694AF1", fontSize: 16, marginLeft: 10 }}>
+              <Text
+                style={{
+                  color: "#694AF1",
+                  fontSize: 16,
+                  marginLeft: 10,
+                }}
+              >
                 Audio
               </Text>
             </View>
@@ -73,7 +155,7 @@ export default function BookDetailsScreen({ route, navigation }) {
           {/*!!!!!!!!!!! AUDIO PREVIEW !!!!!!!!!!!!!!!*/}
         </View>
 
-        <View style={{ height: "55%" }}>
+        <View style={{ height: "58%" }}>
           <ScrollView>
             <Text style={{ color: "white", fontSize: 16 }}>
               {item.description}
@@ -81,7 +163,7 @@ export default function BookDetailsScreen({ route, navigation }) {
           </ScrollView>
         </View>
 
-        <TouchableOpacity style={styles.toCartBtn} onPress={() => {}}>
+        <TouchableOpacity style={styles.toCartBtn} onPress={addToCartList}>
           <Text style={{ color: "white", fontSize: 18 }}>Add to cart</Text>
         </TouchableOpacity>
       </View>
@@ -113,6 +195,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     height: 209,
     justifyContent: "space-between",
+    width: "50%",
   },
   audio: {
     width: 85,
