@@ -23,7 +23,9 @@ export default function BookCover(props) {
       <Text numberOfLines={1} style={styles.title}>
         {props.book.title}
       </Text>
-      <Text style={styles.author}>by {props.book.author}</Text>
+      <Text numberOfLines={1} style={styles.author}>
+        by {props.book.author}
+      </Text>
     </View>
   );
 }
@@ -60,5 +62,6 @@ const styles = StyleSheet.create({
     color: "#FFA919",
     fontSize: 8,
     fontWeight: "700",
+    paddingHorizontal: 15,
   },
 });

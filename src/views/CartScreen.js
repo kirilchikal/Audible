@@ -5,6 +5,7 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
+  Image,
 } from "react-native";
 
 import BookItemCart from "../components/BookItemCart";
@@ -52,19 +53,37 @@ export default function CartScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require("../../assets/emptyCart.png")}
+        style={{
+          transform: books.length == 0 ? [{ scale: 1 }] : [{ scale: 0 }],
+          width: 175,
+          height: 140,
+          position: "absolute",
+          top: "30%",
+          left: "28%",
+        }}
+      ></Image>
       <FlatList
         style={styles.list}
         data={books}
         renderItem={renderBook}
         keyExtractor={(item) => item.id}
       />
-      <View style={styles.purchase}>
+      <View
+        style={[
+          styles.purchase,
+          { transform: books.length == 0 ? [{ scale: 0 }] : [{ scale: 1 }] },
+        ]}
+      >
         <TouchableOpacity>
           <Text style={styles.payBtn}>Pay now</Text>
         </TouchableOpacity>
         <View style={styles.totalPrice}>
           <Text style={styles.total}>Total</Text>
-          <Text style={styles.suma}>${countSum()}</Text>
+          <Text numberOfLines={1} style={styles.suma}>
+            ${Math.round(countSum() * 100) / 100}
+          </Text>
         </View>
       </View>
     </View>

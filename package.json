@@ -24,7 +24,8 @@
     "react-native-star-rating": "^1.1.0",
     "react-native-web": "0.17.1",
     "react-redux": "^8.0.2",
-    "redux": "^4.2.0"
+    "redux": "^4.2.0",
+    "expo-av": "~10.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

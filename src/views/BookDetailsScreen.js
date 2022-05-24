@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,11 @@ import {
 } from "react-native";
 import Rating from "../components/Rating";
 import { FontAwesome } from "@expo/vector-icons";
+
+// AUDIO imports
+import { Audio } from "expo-av";
+import { AntDesign } from "@expo/vector-icons";
+
 import { useDispatch, useSelector } from "react-redux";
 import { addCart, deleteCart } from "../redux/actions/cart";
 import { addFavourite, deleteFavourite } from "../redux/actions/favourite";
@@ -17,6 +22,36 @@ import { db } from "../../firebase";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 export default function BookDetailsScreen({ route, navigation }) {
+  // AUDIO
+  const [isPlaying, setAudioState] = useState(false);
+  const [sound, setSound] = React.useState();
+
+  useEffect(() => {
+    loadAudio();
+  }, []);
+
+  const loadAudio = async () => {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/AudioSample.mp3")
+    );
+    setSound(sound);
+    //console.log('Playing Sound');
+    //await sound.playAsync();
+  };
+
+  const unloadAudio = async () => {
+    sound.unloadAsync();
+  };
+
+  async function playSound() {
+    await sound.playAsync();
+  }
+
+  async function stopSound() {
+    await sound.pauseAsync();
+  }
+
   // Redux & firebase actions
   const addToCartFB = async (key) => {
     console.log(key);
@@ -151,8 +186,24 @@ export default function BookDetailsScreen({ route, navigation }) {
       <View style={styles.main}>
         <View style={styles.description}>
           <Text style={{ color: "white", fontSize: 18 }}>Description</Text>
-          <TouchableOpacity></TouchableOpacity>
-          {/*!!!!!!!!!!! AUDIO PREVIEW !!!!!!!!!!!!!!!*/}
+          <TouchableOpacity
+            style={styles.control}
+            onPress={() => {
+              if (!isPlaying) {
+                playSound();
+              } else {
+                stopSound();
+              }
+              setAudioState(!isPlaying);
+            }}
+          >
+            <Text style={{ color: "#fff", fontSize: 16 }}>Listen preview </Text>
+            {isPlaying ? (
+              <AntDesign name="pause" size={24} color="white" />
+            ) : (
+              <AntDesign name="caretright" size={24} color="white" />
+            )}
+          </TouchableOpacity>
         </View>
 
         <View style={{ height: "58%" }}>
@@ -207,6 +258,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 15,
   },
+  control: {
+    backgroundColor: "#F5AA34",
+    borderRadius: 5,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+  },
   title: {
     color: "white",
     fontSize: 16,
@@ -229,6 +289,7 @@ const styles = StyleSheet.create({
   description: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
   main: {
@@ -241,6 +302,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 30,
+    marginTop: 20,
   },
 });

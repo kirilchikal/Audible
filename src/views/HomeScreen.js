@@ -177,7 +177,7 @@ export default function HomeScreen(props, { navigation }) {
             showsHorizontalScrollIndicator={false}
             style={styles.list}
             horizontal={true}
-            data={books}
+            data={[...books].reverse()}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
           />
