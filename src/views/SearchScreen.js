@@ -13,10 +13,13 @@ import {
 import { Ionicons, Entypo } from "@expo/vector-icons";
 
 import BookItem from "../components/BookItem";
-import bookList from "../Data/bookList";
+import { useSelector, useDispatch } from "react-redux";
+//import bookList from "../Data/bookList";
 import categoryList from "../Data/categoryList";
 
 export default function SearchScreen({ nav }) {
+  const bookList = [...useSelector((state) => state.bookReducer.bookList)];
+
   const [selectedCategory, setCategory] = useState("");
   const [books, setBooks] = useState(bookList);
   const [search, setSearch] = useState("");
