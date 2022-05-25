@@ -187,7 +187,10 @@ export default function BookDetailsScreen({ route, navigation }) {
         <View style={styles.description}>
           <Text style={{ color: "white", fontSize: 18 }}>Description</Text>
           <TouchableOpacity
-            style={styles.control}
+            style={[
+              styles.control,
+              { transform: item.audio ? [{ scale: 1 }] : [{ scale: 0 }] },
+            ]}
             onPress={() => {
               if (!isPlaying) {
                 playSound();
