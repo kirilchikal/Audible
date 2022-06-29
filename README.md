@@ -15,9 +15,9 @@ This application allows users find books, read descriptions of books, add to fav
 - Firebase
 
 ### Screens examples
-![image](https://user-images.githubusercontent.com/48454522/176406012-2b0ef6ee-7393-411b-a67b-eee43f5c2fee.png)
-![image](https://user-images.githubusercontent.com/48454522/176406183-584ef595-69f8-4d3c-9c80-59f6d1cf9adf.png)
-![image](https://user-images.githubusercontent.com/48454522/176406601-24d1d2fe-b4f3-460c-8aea-5ce4327caa37.png)
+<img src="https://user-images.githubusercontent.com/48454522/176406012-2b0ef6ee-7393-411b-a67b-eee43f5c2fee.png" width=200/>
+<img src="https://user-images.githubusercontent.com/48454522/176406183-584ef595-69f8-4d3c-9c80-59f6d1cf9adf.png" width=200/>
+<img src="https://user-images.githubusercontent.com/48454522/176406601-24d1d2fe-b4f3-460c-8aea-5ce4327caa37.png" width=200/>
 
 
 ### Colors
