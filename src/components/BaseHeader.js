@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 
 export default function BaseHeader({title}) {
     return (
@@ -10,11 +10,13 @@ export default function BaseHeader({title}) {
     );
 }
 
+const isAndroid = Platform.OS === 'android';
+
 const styles = StyleSheet.create({
     header: {
-        height: Platform.OS === 'android' ? 95 : 80,
+        height: isAndroid ? 95 : 80,
         backgroundColor: '#212237',
-        paddingTop: Platform.OS === 'android' ? 40 :  20,
+        paddingTop: isAndroid ? 40 :  20,
         paddingHorizontal: 20
     },
     text: {

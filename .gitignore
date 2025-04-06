@@ -1,6 +1,21 @@
+# Node modules
 node_modules/
+.babelrc
+.babel.config.js
+
+# Expo
 .expo/
-dist/
+.expo-shared/
+web-build/
+
+# React Native packager
+ios/build/
+android/app/build/
+
+# Env files
+.env
+.env.*
+
 npm-debug.*
 *.jks
 *.p8
@@ -8,7 +23,20 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.orig.*
-web-build/
+
+# Metro bundler
+.cache/
+tmp/
+dist/
 
 # macOS
 .DS_Store
+
+# Yarn and npm integrity files
+package-lock.json
+yarn.lock
+
+# IDEs & editors
+.vscode/
+.idea/
+*.swp
