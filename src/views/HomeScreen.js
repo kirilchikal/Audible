@@ -63,9 +63,8 @@ export default function HomeScreen(props, { navigation }) {
 
   //FIREBASE
   const fetchBooks = async () => {
-    const response = db.collection("Books");
-    const data = await response.get();
-    data.docs.forEach((item) => {
+    const snapshot = await getDocs(collection(db, "Books"));
+    snapshot.docs.forEach((item) => {
       const book = {};
       book.id = item.id;
       book.audio = getBookAudio(item);
