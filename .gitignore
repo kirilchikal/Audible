@@ -1,3 +1,8 @@
+# Environment (keep secrets out of the repo)
+.env
+.env.local
+.env.*.local
+
 node_modules/
 .expo/
 dist/
