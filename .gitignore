@@ -3,17 +3,55 @@
 .env.local
 .env.*.local
 
+# Dependencies
 node_modules/
+
+# Expo
 .expo/
+.expo-shared/
 dist/
+web-build/
+
+# Expo / Metro generated
+expo-env.d.ts
+.metro-health-check*
+
+# TypeScript
+*.tsbuildinfo
+
+# Native (created by `npx expo prebuild` — omit if you commit android/ and ios/)
+android/
+ios/
+
+# Logs
 npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# Signing & credentials
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-*.orig.*
-web-build/
+*.pem
+google-services.json
+GoogleService-Info.plist
 
-# macOS
+# OS
 .DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors / IDE (tooling cache; commit shared settings if your team uses them)
+.vscode/.react/
+.idea/
+*.swp
+*.swo
+
+# Test / coverage
+coverage/
+
+# Merge / patch artifacts
+*.orig.*

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,8 +11,7 @@ import {
 import Rating from "../components/Rating";
 import { FontAwesome } from "@expo/vector-icons";
 
-// AUDIO imports
-import { Audio } from "expo-av";
+import { useAudioPlayer } from "expo-audio";
 import { AntDesign } from "@expo/vector-icons";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -21,35 +20,19 @@ import { addFavourite, deleteFavourite } from "../redux/actions/favourite";
 import { db } from "../../firebase";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
+const audioSource = require("../../assets/AudioSample.mp3");
+
 export default function BookDetailsScreen({ route, navigation }) {
-  // AUDIO
   const [isPlaying, setAudioState] = useState(false);
-  const [sound, setSound] = React.useState();
+  const player = useAudioPlayer(audioSource);
 
-  useEffect(() => {
-    loadAudio();
-  }, []);
-
-  const loadAudio = async () => {
-    console.log("Loading Sound");
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/AudioSample.mp3")
-    );
-    setSound(sound);
-    //console.log('Playing Sound');
-    //await sound.playAsync();
-  };
-
-  const unloadAudio = async () => {
-    sound.unloadAsync();
-  };
-
-  async function playSound() {
-    await sound.playAsync();
-  }
-
-  async function stopSound() {
-    await sound.pauseAsync();
+  function togglePlayback() {
+    if (isPlaying) {
+      player.pause();
+    } else {
+      player.play();
+    }
+    setAudioState(!isPlaying);
   }
 
   // Redux & firebase actions
@@ -191,14 +174,7 @@ export default function BookDetailsScreen({ route, navigation }) {
               styles.control,
               { transform: item.audio ? [{ scale: 1 }] : [{ scale: 0 }] },
             ]}
-            onPress={() => {
-              if (!isPlaying) {
-                playSound();
-              } else {
-                stopSound();
-              }
-              setAudioState(!isPlaying);
-            }}
+            onPress={togglePlayback}
           >
             <Text style={{ color: "#fff", fontSize: 16 }}>Listen preview </Text>
             {isPlaying ? (

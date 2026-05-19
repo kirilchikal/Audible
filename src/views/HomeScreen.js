@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 import BookCover from "../components/BookCover";
 import { addBook } from "../redux/actions/book";
@@ -81,20 +82,18 @@ export default function HomeScreen(props, { navigation }) {
   };
 
   const fetchCart = async () => {
-    const response = db.collection("Cart");
-    const data = await response.get();
+    const snapshot = await getDocs(collection(db, "Cart"));
     const carts = [];
-    data.docs.forEach((item) => {
+    snapshot.docs.forEach((item) => {
       carts.push(getCartBooks(item));
     });
     carts[0].forEach((bookId) => dispatch(addCart(bookId)));
   };
 
   const fetchFavourite = async () => {
-    const response = db.collection("Favourite");
-    const data = await response.get();
+    const snapshot = await getDocs(collection(db, "Favourite"));
     const favourite = [];
-    data.docs.forEach((item) => {
+    snapshot.docs.forEach((item) => {
       favourite.push(getFavouriteBooks(item));
     });
     favourite[0].forEach((bookId) => dispatch(addFavourite(bookId)));
