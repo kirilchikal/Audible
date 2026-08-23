@@ -4,10 +4,13 @@ import SignInScreen from "../views/SignInScreen";
 import SignUpScreen from "../views/SignUpScreen";
 import Tabs from "./Tabs";
 import BookDetailsScreen from "../views/BookDetailsScreen";
+import { useTheme } from "../theme/ThemeContext";
 
 const RootStack = createNativeStackNavigator();
 
 export default function RootStackScreen({ navigation }) {
+  const { colors } = useTheme();
+
   return (
     <RootStack.Navigator>
       <RootStack.Screen
@@ -31,9 +34,9 @@ export default function RootStackScreen({ navigation }) {
         options={{
           headerBackButtonMenuEnabled: false,
           title: "",
-          headerTintColor: "white",
+          headerTintColor: colors.textPrimary,
           headerStyle: {
-            backgroundColor: "#212237",
+            backgroundColor: colors.surface,
             shadowColor: "transparent",
           },
         }}

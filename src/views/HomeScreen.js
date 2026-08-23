@@ -18,6 +18,7 @@ import BookCover from "../components/BookCover";
 import { addBook } from "../redux/actions/book";
 import { addCart } from "../redux/actions/cart";
 import { addFavourite } from "../redux/actions/favourite";
+import { useTheme } from "../theme/ThemeContext";
 
 //FIREBASE HELPERS
 function getBookTitle(documentSnapshot) {
@@ -58,8 +59,10 @@ function getFavouriteBooks(documentSnapshot) {
 }
 //FIREBASE HELPERS
 
-export default function HomeScreen(props, { navigation }) {
+export default function HomeScreen(props) {
   const dispatch = useDispatch();
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
 
   //FIREBASE
   const fetchBooks = async () => {
@@ -134,7 +137,7 @@ export default function HomeScreen(props, { navigation }) {
         style={{ borderRadius: 50, width: 70, height: 70 }}
         source={{ uri: item.imgUrl }}
       />
-      <Text style={{ color: "white", fontSize: 10, fontWeight: "100" }}>
+      <Text style={{ color: colors.textPrimary, fontSize: 10, fontWeight: "100" }}>
         {item.name}
       </Text>
     </View>
@@ -148,7 +151,7 @@ export default function HomeScreen(props, { navigation }) {
     <SafeAreaView style={styles.container}>
       <ActivityIndicator
         size="large"
-        color="#F56C26"
+        color={colors.cta}
         animating={load ? true : false}
         style={styles.loader}
       />
@@ -196,10 +199,10 @@ export default function HomeScreen(props, { navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
   },
   list: {
     paddingVertical: 12,
@@ -210,7 +213,7 @@ const styles = StyleSheet.create({
   },
   scrollTitle: {
     fontSize: 20,
-    color: "white",
+    color: colors.textPrimary,
     marginLeft: 15,
   },
   loader: {

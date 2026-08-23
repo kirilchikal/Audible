@@ -1,10 +1,13 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
+import { useTheme } from "../theme/ThemeContext";
 
 export default function SignUpScreen({navigation}) {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [repeat, setRepeat] = useState('');
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
 
   //validate func befor creating account
 
@@ -38,7 +41,7 @@ export default function SignUpScreen({navigation}) {
         </View>
         <View style={styles.btn} >
           <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate('Tabs')}>
-            <Text style={{color: 'white', textTransform: "uppercase"}}>Create</Text>
+            <Text style={{color: colors.ctaContrast, textTransform: "uppercase"}}>Create</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('SignInScreen')}>
               <Text style={styles.createBtn}>Have an account? Login</Text>
@@ -50,15 +53,14 @@ export default function SignUpScreen({navigation}) {
 
 
 
-  const styles = StyleSheet.create({
+  const getStyles = (colors) => StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
       alignItems: 'center',
-      backgroundColor: '#212237',
+      backgroundColor: colors.surface,
     },
     title: {
-      color: 'white',
+      color: colors.textPrimary,
       fontSize: 24,
       top: '20%',
     },
@@ -67,14 +69,14 @@ export default function SignUpScreen({navigation}) {
       top: '30%',
     },
     input: {
-      borderBottomColor: '#999AA3',
+      borderBottomColor: colors.textSecondary,
       borderBottomWidth: 1,
       fontSize: 18,
-      color: '#B1B2B9',
+      color: colors.textMuted,
     },
     inputText: {
       fontSize: 10,
-      color: '#999AA3',
+      color: colors.textSecondary,
       textTransform: "uppercase",
       marginBottom: 12,
     },
@@ -88,16 +90,14 @@ export default function SignUpScreen({navigation}) {
     loginBtn: {
       width: 285,
       height: 40,
-      backgroundColor: '#F56C26',
-      color: 'white',
+      backgroundColor: colors.cta,
       borderRadius: 5,
       alignItems: "center",
       justifyContent: "center",
     },
     createBtn: {
       fontSize: 16,
-      color: '#999AA3',
+      color: colors.textSecondary,
       marginTop: 25,
     },
   });
-  

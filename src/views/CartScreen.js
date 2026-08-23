@@ -13,8 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteCart } from "../redux/actions/cart";
 import { db } from "../../firebase";
 import { doc, updateDoc, arrayRemove } from "firebase/firestore";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function CartScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
   //Redux
   const removeFromCartFB = async (key) => {
     console.log(key);
@@ -90,10 +93,10 @@ export default function CartScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
   },
   list: {
     padding: 10,
@@ -102,15 +105,15 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     margin: 15,
-    backgroundColor: "#212236",
+    backgroundColor: colors.surface,
     borderRadius: 5,
     padding: "5%",
     justifyContent: "space-between",
   },
   payBtn: {
-    color: "#fff",
+    color: colors.ctaContrast,
     fontSize: 20,
-    backgroundColor: "#F56C26",
+    backgroundColor: colors.cta,
     paddingVertical: "3%",
     paddingHorizontal: "10%",
     borderRadius: 5,
@@ -122,11 +125,11 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   total: {
-    color: "#fff",
+    color: colors.textPrimary,
     fontSize: 12,
   },
   suma: {
-    color: "#fff",
+    color: colors.textPrimary,
     fontSize: 22,
     fontWeight: "bold",
   },

@@ -19,12 +19,15 @@ import { addCart, deleteCart } from "../redux/actions/cart";
 import { addFavourite, deleteFavourite } from "../redux/actions/favourite";
 import { db } from "../../firebase";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { useTheme } from "../theme/ThemeContext";
 
 const audioSource = require("../../assets/AudioSample.mp3");
 
 export default function BookDetailsScreen({ route, navigation }) {
   const [isPlaying, setAudioState] = useState(false);
   const player = useAudioPlayer(audioSource);
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
 
   function togglePlayback() {
     if (isPlaying) {
@@ -136,7 +139,7 @@ export default function BookDetailsScreen({ route, navigation }) {
               <Image source={require("../../assets/audio.png")} />
               <Text
                 style={{
-                  color: "#694AF1",
+                  color: colors.highlight,
                   fontSize: 16,
                   marginLeft: 10,
                 }}
@@ -161,14 +164,14 @@ export default function BookDetailsScreen({ route, navigation }) {
           <FontAwesome
             name={marked ? "bookmark" : "bookmark-o"}
             size={36}
-            color="#F56C26"
+            color={colors.cta}
           />
         </TouchableOpacity>
       </View>
 
       <View style={styles.main}>
         <View style={styles.description}>
-          <Text style={{ color: "white", fontSize: 18 }}>Description</Text>
+          <Text style={{ color: colors.textPrimary, fontSize: 18 }}>Description</Text>
           <TouchableOpacity
             style={[
               styles.control,
@@ -176,38 +179,38 @@ export default function BookDetailsScreen({ route, navigation }) {
             ]}
             onPress={togglePlayback}
           >
-            <Text style={{ color: "#fff", fontSize: 16 }}>Listen preview </Text>
+            <Text style={{ color: colors.ctaContrast, fontSize: 16 }}>Listen preview </Text>
             {isPlaying ? (
-              <AntDesign name="pause" size={24} color="white" />
+              <AntDesign name="pause" size={24} color={colors.ctaContrast} />
             ) : (
-              <AntDesign name="caretright" size={24} color="white" />
+              <AntDesign name="caretright" size={24} color={colors.ctaContrast} />
             )}
           </TouchableOpacity>
         </View>
 
         <View style={{ height: "58%" }}>
           <ScrollView>
-            <Text style={{ color: "white", fontSize: 16 }}>
+            <Text style={{ color: colors.textPrimary, fontSize: 16 }}>
               {item.description}
             </Text>
           </ScrollView>
         </View>
 
         <TouchableOpacity style={styles.toCartBtn} onPress={addToCartList}>
-          <Text style={{ color: "white", fontSize: 18 }}>Add to cart</Text>
+          <Text style={{ color: colors.ctaContrast, fontSize: 18 }}>Add to cart</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
   },
   head: {
-    backgroundColor: "#212237",
+    backgroundColor: colors.surface,
     height: "34%",
     width: "100%",
     paddingBottom: 15,
@@ -229,7 +232,7 @@ const styles = StyleSheet.create({
   },
   audio: {
     width: 85,
-    backgroundColor: "white",
+    backgroundColor: colors.ctaContrast,
     opacity: 0.9,
     borderRadius: 5,
     flexDirection: "row",
@@ -238,7 +241,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   control: {
-    backgroundColor: "#F5AA34",
+    backgroundColor: colors.accent,
     borderRadius: 5,
     display: "flex",
     flexDirection: "row",
@@ -247,15 +250,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   title: {
-    color: "white",
+    color: colors.textPrimary,
     fontSize: 16,
   },
   author: {
-    color: "#F5AC39",
+    color: colors.accent,
     fontSize: 14,
   },
   price: {
-    color: "white",
+    color: colors.textPrimary,
     fontSize: 16,
     marginBottom: 5,
     marginTop: 5,
@@ -275,7 +278,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   toCartBtn: {
-    backgroundColor: "#F56C26",
+    backgroundColor: colors.cta,
     width: 160,
     height: 50,
     borderRadius: 5,

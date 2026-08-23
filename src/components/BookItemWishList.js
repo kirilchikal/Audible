@@ -3,8 +3,12 @@ import { Text, StyleSheet, Image, View, TouchableOpacity } from "react-native";
 import Rating from "./Rating";
 
 import { FontAwesome } from "@expo/vector-icons";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function BookItem(props) {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
+
   const removeFavourite = () => {
     props.remove(props.item.id);
   };
@@ -33,7 +37,7 @@ export default function BookItem(props) {
       </View>
       <View style={styles.markContainer}>
         <TouchableOpacity style={styles.whishBtn} onPress={removeFavourite}>
-          <FontAwesome name="bookmark" size={36} color="#F56C26" />
+          <FontAwesome name="bookmark" size={36} color={colors.cta} />
         </TouchableOpacity>
         <Text style={styles.price}>${props.item.price}</Text>
       </View>
@@ -41,18 +45,18 @@ export default function BookItem(props) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#212236",
+    backgroundColor: colors.surface,
     height: 145,
     width: "100%",
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 5,
-    shadowColor: "#212236",
+    shadowColor: colors.surface,
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -70,12 +74,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   title: {
-    color: "#F9F9F9",
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: "500",
   },
   author: {
-    color: "#F5AC39",
+    color: colors.accent,
     fontSize: 14,
   },
   rating: {
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   price: {
-    color: "white",
+    color: colors.textPrimary,
     fontSize: 15,
   },
 });
