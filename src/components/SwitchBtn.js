@@ -12,7 +12,7 @@ export default function SwitchBtn(props) {
         onPress={props.toogleAudio}
         style={{
           flex: 1,
-          backgroundColor: !props.isAudio ? colors.overlay : colors.accent,
+          backgroundColor: !props.isAudio ? colors.switchUnselectedBg : colors.switchSelectedBg,
           borderRadius: 35,
           justifyContent: "center",
           alignItems: "center",
@@ -20,7 +20,7 @@ export default function SwitchBtn(props) {
       >
         <Text
           style={{
-            color: !props.isAudio ? colors.accent : colors.ctaContrast,
+            color: !props.isAudio ? colors.switchUnselectedText : colors.switchSelectedText,
             fontSize: 16,
           }}
         >
@@ -32,7 +32,7 @@ export default function SwitchBtn(props) {
         onPress={props.toogleAudio}
         style={{
           flex: 1,
-          backgroundColor: props.isAudio ? colors.overlay : colors.accent,
+          backgroundColor: props.isAudio ? colors.switchUnselectedBg : colors.switchSelectedBg,
           borderRadius: 35,
           justifyContent: "center",
           alignItems: "center",
@@ -40,7 +40,7 @@ export default function SwitchBtn(props) {
       >
         <Text
           style={{
-            color: props.isAudio ? colors.accent : colors.ctaContrast,
+            color: props.isAudio ? colors.switchUnselectedText : colors.switchSelectedText,
             fontSize: 16,
           }}
         >
@@ -55,7 +55,7 @@ const getStyles = (colors) => StyleSheet.create({
   switch: {
     height: 40,
     width: 348,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.switchTrack,
     borderRadius: 35,
     flexDirection: "row",
     justifyContent: "center",

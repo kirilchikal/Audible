@@ -48,7 +48,9 @@ export default function Tabs({ navigation }) {
               />
             </View>
           ),
-          header: () => <HomeHeader audio={audio} toogle={toogleAudio} />,
+          header: () => (
+            <HomeHeader audio={audio} toogle={toogleAudio} navigation={navigation} />
+          ),
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -64,7 +66,7 @@ export default function Tabs({ navigation }) {
               />
             </View>
           ),
-          header: () => <SearchHeader />,
+          header: () => <SearchHeader navigation={navigation} />,
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -80,7 +82,7 @@ export default function Tabs({ navigation }) {
               />
             </View>
           ),
-          header: () => <BaseHeader title={"Whish List"} />,
+          header: () => <BaseHeader title={"Whish List"} navigation={navigation} />,
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -96,7 +98,7 @@ export default function Tabs({ navigation }) {
               />
             </View>
           ),
-          header: () => <BaseHeader title={"Your Cart"} />,
+          header: () => <BaseHeader title={"Your Cart"} navigation={navigation} />,
         }}
       ></Tab.Screen>
     </Tab.Navigator>

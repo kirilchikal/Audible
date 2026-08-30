@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/actions/user";
 import { useTheme } from "../theme/ThemeContext";
 
 export default function SignUpScreen({navigation}) {
@@ -8,6 +10,12 @@ export default function SignUpScreen({navigation}) {
   const [repeat, setRepeat] = useState('');
   const { colors } = useTheme();
   const styles = useMemo(() => getStyles(colors), [colors]);
+  const dispatch = useDispatch();
+
+  const handleCreate = () => {
+    dispatch(setUser(login));
+    navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
+  };
 
   //validate func befor creating account
 
@@ -19,14 +27,16 @@ export default function SignUpScreen({navigation}) {
             <Text style={styles.inputText}>Username</Text>
             <TextInput
               style={styles.input}
-              onChange={text => setLogin(text)}
+              onChangeText={setLogin}
+              value={login}
             />
           </View>
           <View style={styles.inputPassword}>
           <Text style={styles.inputText}>Password</Text>
             <TextInput
               style={styles.input}
-              onChange={text => setPassword(text)}
+              onChangeText={setPassword}
+              value={password}
               secureTextEntry
             />
           </View>
@@ -34,18 +44,14 @@ export default function SignUpScreen({navigation}) {
           <Text style={styles.inputText}>Repeat Password</Text>
             <TextInput
               style={styles.input}
-              onChange={text => setRepeat(text)}
+              onChangeText={setRepeat}
+              value={repeat}
               secureTextEntry
             />
           </View>
         </View>
         <View style={styles.btn} >
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() =>
-              navigation.reset({ index: 0, routes: [{ name: "Tabs" }] })
-            }
-          >
+          <TouchableOpacity style={styles.loginBtn} onPress={handleCreate}>
             <Text style={{color: colors.ctaContrast, textTransform: "uppercase"}}>Create</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('SignInScreen')}>

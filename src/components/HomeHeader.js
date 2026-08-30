@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import {View, Text, StyleSheet, Platform} from 'react-native';
 import SwitchBtn from './SwitchBtn';
 import { useTheme } from '../theme/ThemeContext';
-import ThemeToggleButton from './ThemeToggleButton';
+import UserButton from './UserButton';
 
 export default function HomeHeader(props) {
     const { colors } = useTheme();
@@ -13,7 +13,7 @@ export default function HomeHeader(props) {
         <View style={styles.header}>
             <View style={styles.titleRow}>
                 <Text style={styles.text}>Home</Text>
-                <ThemeToggleButton />
+                <UserButton navigation={props.navigation} />
             </View>
             <View style={styles.switch}>
                 <SwitchBtn isAudio={props.audio} toogleAudio={props.toogle}/>

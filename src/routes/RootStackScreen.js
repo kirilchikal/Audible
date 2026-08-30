@@ -6,9 +6,37 @@ import SignInScreen from "../views/SignInScreen";
 import SignUpScreen from "../views/SignUpScreen";
 import Tabs from "./Tabs";
 import BookDetailsScreen from "../views/BookDetailsScreen";
+import UserScreen from "../views/UserScreen";
 import { useTheme } from "../theme/ThemeContext";
 
 const RootStack = createNativeStackNavigator();
+
+function backButtonHeaderOptions(colors, navigation, title = "") {
+  return {
+    headerBackButtonMenuEnabled: false,
+    headerBackVisible: false,
+    title,
+    headerTintColor: colors.textPrimary,
+    headerStyle: {
+      backgroundColor: colors.surface,
+      shadowColor: "transparent",
+    },
+    headerLeft: () => (
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Tabs")}
+        hitSlop={10}
+        style={{
+          width: 32,
+          height: 32,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+      </TouchableOpacity>
+    ),
+  };
+}
 
 export default function RootStackScreen({ navigation }) {
   const { colors } = useTheme();
@@ -33,30 +61,14 @@ export default function RootStackScreen({ navigation }) {
       <RootStack.Screen
         name="BookDetailsScreen"
         component={BookDetailsScreen}
-        options={({ navigation }) => ({
-          headerBackButtonMenuEnabled: false,
-          headerBackVisible: false,
-          title: "",
-          headerTintColor: colors.textPrimary,
-          headerStyle: {
-            backgroundColor: colors.surface,
-            shadowColor: "transparent",
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Tabs")}
-              hitSlop={10}
-              style={{
-                width: 32,
-                height: 32,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
-            </TouchableOpacity>
-          ),
-        })}
+        options={({ navigation }) => backButtonHeaderOptions(colors, navigation)}
+      ></RootStack.Screen>
+      <RootStack.Screen
+        name="UserScreen"
+        component={UserScreen}
+        options={({ navigation }) =>
+          backButtonHeaderOptions(colors, navigation, "Account")
+        }
       ></RootStack.Screen>
     </RootStack.Navigator>
   );

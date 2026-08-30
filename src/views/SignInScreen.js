@@ -8,13 +8,21 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/actions/user";
 import { useTheme } from "../theme/ThemeContext";
 
 export default function SignInScreen({ navigation }) {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+  const [login, setLogin] = useState("user1@test.au");
+  const [password, setPassword] = useState("audible");
   const { colors } = useTheme();
   const styles = useMemo(() => getStyles(colors), [colors]);
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    dispatch(setUser(login));
+    navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,27 +32,22 @@ export default function SignInScreen({ navigation }) {
           <Text style={styles.inputText}>Username</Text>
           <TextInput
             style={styles.input}
-            onChange={(text) => setLogin(text)}
-            value="user1@test.au"
+            onChangeText={setLogin}
+            value={login}
           />
         </View>
         <View style={styles.inputPassword}>
           <Text style={styles.inputText}>Password</Text>
           <TextInput
             style={styles.input}
-            onChange={(text) => setPassword(text)}
-            value="audible"
+            onChangeText={setPassword}
+            value={password}
             secureTextEntry
           />
         </View>
       </View>
       <View style={styles.btn}>
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() =>
-            navigation.reset({ index: 0, routes: [{ name: "Tabs" }] })
-          }
-        >
+        <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
           <Text style={{ color: colors.ctaContrast, textTransform: "uppercase" }}>
             Login
           </Text>

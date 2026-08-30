@@ -2,15 +2,15 @@ import React, { useMemo } from 'react';
 
 import {View, Text, StyleSheet, Platform} from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
-import ThemeToggleButton from './ThemeToggleButton';
+import UserButton from './UserButton';
 
-export default function BaseHeader({title}) {
+export default function BaseHeader({title, navigation}) {
     const { colors } = useTheme();
     const styles = useMemo(() => getStyles(colors), [colors]);
     return (
         <View style={styles.header}>
             <Text style={styles.text}>{title}</Text>
-            <ThemeToggleButton />
+            <UserButton navigation={navigation} />
         </View>
     );
 }
