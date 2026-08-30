@@ -172,7 +172,7 @@ export default function BookDetailsScreen({ route, navigation }) {
             {isPlaying ? (
               <AntDesign name="pause" size={24} color={colors.ctaContrast} />
             ) : (
-              <AntDesign name="caretright" size={24} color={colors.ctaContrast} />
+              <AntDesign name="caret-right" size={24} color={colors.ctaContrast} />
             )}
           </TouchableOpacity>
         </View>

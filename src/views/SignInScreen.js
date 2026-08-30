@@ -41,7 +41,9 @@ export default function SignInScreen({ navigation }) {
       <View style={styles.btn}>
         <TouchableOpacity
           style={styles.loginBtn}
-          onPress={() => navigation.navigate("Tabs")}
+          onPress={() =>
+            navigation.reset({ index: 0, routes: [{ name: "Tabs" }] })
+          }
         >
           <Text style={{ color: colors.ctaContrast, textTransform: "uppercase" }}>
             Login

@@ -46,8 +46,14 @@ export default function RootStackScreen({ navigation }) {
             <TouchableOpacity
               onPress={() => navigation.navigate("Tabs")}
               hitSlop={10}
+              style={{
+                width: 32,
+                height: 32,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              <Ionicons name="arrow-back" size={26} color={colors.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           ),
         })}
