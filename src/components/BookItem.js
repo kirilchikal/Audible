@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, StyleSheet, Image, View } from "react-native";
 import Rating from "./Rating";
 import { useTheme } from "../theme/ThemeContext";
 
 export default function BookItem(props) {
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
   return (
     <View style={styles.item}>
       <Image style={styles.cover} source={{ uri: props.item.image_url }} />

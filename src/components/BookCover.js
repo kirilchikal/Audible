@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, StyleSheet, Image, View } from "react-native";
 import { useTheme } from "../theme/ThemeContext";
 
-export default function BookCover(props) {
+function BookCover(props) {
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
   return (
     <View style={styles.book}>
       <View>
@@ -32,6 +32,8 @@ export default function BookCover(props) {
     </View>
   );
 }
+
+export default React.memo(BookCover);
 
 const getStyles = (colors) => StyleSheet.create({
   book: {

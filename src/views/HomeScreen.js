@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Text,
   StyleSheet,
@@ -62,7 +62,7 @@ function getFavouriteBooks(documentSnapshot) {
 export default function HomeScreen(props) {
   const dispatch = useDispatch();
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
   //FIREBASE
   const fetchBooks = async () => {
@@ -115,13 +115,16 @@ export default function HomeScreen(props) {
 
   const [load, setLoad] = useState(true);
   const [loadingCount, setLoadingCount] = useState(0);
-  const plusLoad = () => {
-    setLoadingCount(loadingCount + 1);
-  };
-  const minusLoad = () => {
-    setLoadingCount(loadingCount - 1);
-    if (loadingCount <= 1) setLoad(false);
-  };
+  const plusLoad = useCallback(() => {
+    setLoadingCount((count) => count + 1);
+  }, []);
+  const minusLoad = useCallback(() => {
+    setLoadingCount((count) => {
+      const next = count - 1;
+      if (next <= 0) setLoad(false);
+      return next;
+    });
+  }, []);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity

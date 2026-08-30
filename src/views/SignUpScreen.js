@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, TextInput } from 'react-native';
 import { useTheme } from "../theme/ThemeContext";
 
@@ -7,7 +7,7 @@ export default function SignUpScreen({navigation}) {
   const [password, setPassword] = useState('');
   const [repeat, setRepeat] = useState('');
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
   //validate func befor creating account
 

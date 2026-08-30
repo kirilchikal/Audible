@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, StyleSheet, Image, View, TouchableOpacity } from "react-native";
 import { useTheme } from "../theme/ThemeContext";
 
 export default function BookItem(props) {
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
   const removeBook = () => {
     props.remove(props.item.id);

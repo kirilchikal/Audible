@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {View, Text, StyleSheet, Platform} from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
@@ -6,7 +6,7 @@ import ThemeToggleButton from './ThemeToggleButton';
 
 export default function SearchHeader() {
     const { colors } = useTheme();
-    const styles = getStyles(colors);
+    const styles = useMemo(() => getStyles(colors), [colors]);
     return (
         <View style={styles.header}>
             <Text style={styles.text}>Search</Text>

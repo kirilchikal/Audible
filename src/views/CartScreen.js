@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -17,7 +17,7 @@ import { useTheme } from "../theme/ThemeContext";
 
 export default function CartScreen({ navigation }) {
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
   //Redux
   const removeFromCartFB = async (key) => {
     console.log(key);

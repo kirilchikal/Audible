@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   TouchableOpacity,
@@ -21,7 +21,7 @@ import { useTheme } from "../theme/ThemeContext";
 export default function SearchScreen({ nav }) {
   const bookList = [...useSelector((state) => state.bookReducer.bookList)];
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
   const [selectedCategory, setCategory] = useState("");
   const [books, setBooks] = useState(bookList);

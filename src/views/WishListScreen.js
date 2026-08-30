@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import BookItemWishList from "../components/BookItemWishList";
 import { useDispatch } from "react-redux";
@@ -10,7 +10,7 @@ import { useTheme } from "../theme/ThemeContext";
 
 export default function WishListScreen({ navigation }) {
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
   //Redux
   const favouriteList = useSelector(
     (state) => state.favouriteReducer.favouriteList

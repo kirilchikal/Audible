@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   StyleSheet,
   Text,
@@ -27,7 +27,7 @@ export default function BookDetailsScreen({ route, navigation }) {
   const [isPlaying, setAudioState] = useState(false);
   const player = useAudioPlayer(audioSource);
   const { colors } = useTheme();
-  const styles = getStyles(colors);
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
   function togglePlayback() {
     if (isPlaying) {
