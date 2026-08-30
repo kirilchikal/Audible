@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Text,
   StyleSheet,
@@ -12,11 +12,13 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 import BookCover from "../components/BookCover";
 import { addBook } from "../redux/actions/book";
-import { addCart } from "../redux/actions/cart";
+import { setCart } from "../redux/actions/cart";
 import { addFavourite } from "../redux/actions/favourite";
+import { useTheme } from "../theme/ThemeContext";
 
 //FIREBASE HELPERS
 function getBookTitle(documentSnapshot) {
@@ -48,8 +50,8 @@ function getBookRating(documentSnapshot) {
   return documentSnapshot.get("rating");
 }
 
-function getCartBooks(documentSnapshot) {
-  return documentSnapshot.get("books");
+function getCartItems(documentSnapshot) {
+  return documentSnapshot.get("items");
 }
 
 function getFavouriteBooks(documentSnapshot) {
@@ -57,14 +59,15 @@ function getFavouriteBooks(documentSnapshot) {
 }
 //FIREBASE HELPERS
 
-export default function HomeScreen(props, { navigation }) {
+export default function HomeScreen(props) {
   const dispatch = useDispatch();
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
   //FIREBASE
   const fetchBooks = async () => {
-    const response = db.collection("Books");
-    const data = await response.get();
-    data.docs.forEach((item) => {
+    const snapshot = await getDocs(collection(db, "Books"));
+    snapshot.docs.forEach((item) => {
       const book = {};
       book.id = item.id;
       book.audio = getBookAudio(item);
@@ -81,20 +84,18 @@ export default function HomeScreen(props, { navigation }) {
   };
 
   const fetchCart = async () => {
-    const response = db.collection("Cart");
-    const data = await response.get();
+    const snapshot = await getDocs(collection(db, "Cart"));
     const carts = [];
-    data.docs.forEach((item) => {
-      carts.push(getCartBooks(item));
+    snapshot.docs.forEach((item) => {
+      carts.push(getCartItems(item));
     });
-    carts[0].forEach((bookId) => dispatch(addCart(bookId)));
+    dispatch(setCart(carts[0] ?? []));
   };
 
   const fetchFavourite = async () => {
-    const response = db.collection("Favourite");
-    const data = await response.get();
+    const snapshot = await getDocs(collection(db, "Favourite"));
     const favourite = [];
-    data.docs.forEach((item) => {
+    snapshot.docs.forEach((item) => {
       favourite.push(getFavouriteBooks(item));
     });
     favourite[0].forEach((bookId) => dispatch(addFavourite(bookId)));
@@ -114,13 +115,16 @@ export default function HomeScreen(props, { navigation }) {
 
   const [load, setLoad] = useState(true);
   const [loadingCount, setLoadingCount] = useState(0);
-  const plusLoad = () => {
-    setLoadingCount(loadingCount + 1);
-  };
-  const minusLoad = () => {
-    setLoadingCount(loadingCount - 1);
-    if (loadingCount <= 1) setLoad(false);
-  };
+  const plusLoad = useCallback(() => {
+    setLoadingCount((count) => count + 1);
+  }, []);
+  const minusLoad = useCallback(() => {
+    setLoadingCount((count) => {
+      const next = count - 1;
+      if (next <= 0) setLoad(false);
+      return next;
+    });
+  }, []);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -136,7 +140,7 @@ export default function HomeScreen(props, { navigation }) {
         style={{ borderRadius: 50, width: 70, height: 70 }}
         source={{ uri: item.imgUrl }}
       />
-      <Text style={{ color: "white", fontSize: 10, fontWeight: "100" }}>
+      <Text style={{ color: colors.textPrimary, fontSize: 10, fontWeight: "100" }}>
         {item.name}
       </Text>
     </View>
@@ -150,7 +154,7 @@ export default function HomeScreen(props, { navigation }) {
     <SafeAreaView style={styles.container}>
       <ActivityIndicator
         size="large"
-        color="#F56C26"
+        color={colors.cta}
         animating={load ? true : false}
         style={styles.loader}
       />
@@ -198,10 +202,10 @@ export default function HomeScreen(props, { navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
   },
   list: {
     paddingVertical: 12,
@@ -211,8 +215,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   scrollTitle: {
-    fontSize: 20,
-    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.textPrimary,
     marginLeft: 15,
   },
   loader: {

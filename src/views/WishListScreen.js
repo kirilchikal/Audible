@@ -1,13 +1,16 @@
 import { useSelector } from "react-redux";
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import BookItemWishList from "../components/BookItemWishList";
 import { useDispatch } from "react-redux";
 import { deleteFavourite } from "../redux/actions/favourite";
 import { db } from "../../firebase";
 import { doc, updateDoc, arrayRemove } from "firebase/firestore";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function WishListScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
   //Redux
   const favouriteList = useSelector(
     (state) => state.favouriteReducer.favouriteList
@@ -55,10 +58,10 @@ export default function WishListScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
   },
   list: {
     padding: 10,

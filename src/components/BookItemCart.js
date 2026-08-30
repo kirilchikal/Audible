@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, StyleSheet, Image, View, TouchableOpacity } from "react-native";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function BookItem(props) {
-  const removeBook = () => {
-    props.remove(props.item.id);
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
+
+  const increment = () => {
+    props.onIncrement(props.item.id);
+  };
+  const decrement = () => {
+    props.onDecrement(props.item.id);
   };
 
   return (
@@ -25,26 +32,32 @@ export default function BookItem(props) {
           }}
           source={require("../../assets/audio.png")}
         />
-        <TouchableOpacity onPress={removeBook}>
-          <Text style={styles.removeBtn}>Remove</Text>
-        </TouchableOpacity>
+        <View style={styles.stepper}>
+          <TouchableOpacity style={styles.stepperBtn} onPress={decrement} hitSlop={8}>
+            <Text style={styles.stepperBtnText}>−</Text>
+          </TouchableOpacity>
+          <Text style={styles.qty}>{props.qty}</Text>
+          <TouchableOpacity style={styles.stepperBtn} onPress={increment} hitSlop={8}>
+            <Text style={styles.stepperBtnText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#212236",
+    backgroundColor: colors.surface,
     height: 145,
     width: "100%",
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 5,
-    shadowColor: "#212236",
+    shadowColor: colors.surface,
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -62,12 +75,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   title: {
-    color: "#F9F9F9",
+    color: colors.textPrimary,
     fontSize: 16,
     fontWeight: "500",
   },
   author: {
-    color: "#F5AC39",
+    color: colors.accent,
     fontSize: 14,
   },
   rating: {
@@ -81,16 +94,30 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   price: {
-    color: "white",
+    color: colors.textPrimary,
     fontSize: 15,
   },
-  removeBtn: {
-    backgroundColor: "#F56C26",
-    color: "#fff",
-    fontSize: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    overflow: "hidden",
+  stepper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.cta,
     borderRadius: 5,
+    overflow: "hidden",
+  },
+  stepperBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  stepperBtnText: {
+    color: colors.ctaContrast,
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  qty: {
+    color: colors.ctaContrast,
+    fontSize: 14,
+    fontWeight: "600",
+    minWidth: 18,
+    textAlign: "center",
   },
 });

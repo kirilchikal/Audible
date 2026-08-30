@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -10,44 +10,55 @@ import {
 
 import BookItemCart from "../components/BookItemCart";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteCart } from "../redux/actions/cart";
+import { addCart, deleteCart } from "../redux/actions/cart";
+import { incrementCartItem, decrementCartItem, getCartQty } from "../redux/cartUtils";
 import { db } from "../../firebase";
-import { doc, updateDoc, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function CartScreen({ navigation }) {
-  //Redux
-  const removeFromCartFB = async (key) => {
-    console.log(key);
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
+
+  const syncCartFB = async (items) => {
     const cartRef = doc(db, "Cart", "0");
-    await updateDoc(cartRef, {
-      books: arrayRemove(key),
-    });
+    await updateDoc(cartRef, { items });
   };
 
   const cartList = useSelector((state) => state.cartReducer.cartList);
   const booksList = useSelector((state) => state.bookReducer.bookList);
-  const books = booksList.filter((book) => cartList.includes(book.id));
+  const books = booksList.filter((book) =>
+    cartList.some((entry) => entry.id === book.id)
+  );
 
   //Dispatcher
   const dispatch = useDispatch();
-  const removeFromCart = (key) => {
-    dispatch(deleteCart(key));
-    removeFromCartFB(key);
+  const incrementItem = (key) => {
+    dispatch(addCart(key));
+    syncCartFB(incrementCartItem(cartList, key));
   };
-  //
+  const decrementItem = (key) => {
+    dispatch(deleteCart(key));
+    syncCartFB(decrementCartItem(cartList, key));
+  };
 
   const renderBook = ({ item }) => (
     <TouchableOpacity
       style={{ marginBottom: 10 }}
       onPress={() => navigation.navigate("BookDetailsScreen", { item })}
     >
-      <BookItemCart item={item} remove={removeFromCart}></BookItemCart>
+      <BookItemCart
+        item={item}
+        qty={getCartQty(cartList, item.id)}
+        onIncrement={incrementItem}
+        onDecrement={decrementItem}
+      ></BookItemCart>
     </TouchableOpacity>
   );
 
   const countSum = () => {
     return books
-      .map((book) => book.price)
+      .map((book) => book.price * getCartQty(cartList, book.id))
       .reduce((prev, curr) => prev + curr, 0);
   };
 
@@ -90,10 +101,10 @@ export default function CartScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
   },
   list: {
     padding: 10,
@@ -102,15 +113,15 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     margin: 15,
-    backgroundColor: "#212236",
+    backgroundColor: colors.surface,
     borderRadius: 5,
     padding: "5%",
     justifyContent: "space-between",
   },
   payBtn: {
-    color: "#fff",
+    color: colors.ctaContrast,
     fontSize: 20,
-    backgroundColor: "#F56C26",
+    backgroundColor: colors.cta,
     paddingVertical: "3%",
     paddingHorizontal: "10%",
     borderRadius: 5,
@@ -122,11 +133,11 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   total: {
-    color: "#fff",
+    color: colors.textPrimary,
     fontSize: 12,
   },
   suma: {
-    color: "#fff",
+    color: colors.textPrimary,
     fontSize: 22,
     fontWeight: "bold",
   },

@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, StyleSheet, Image, View } from "react-native";
+import { useTheme } from "../theme/ThemeContext";
 
-export default function BookCover(props) {
+function BookCover(props) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
   return (
     <View style={styles.book}>
       <View>
@@ -30,11 +33,13 @@ export default function BookCover(props) {
   );
 }
 
-const styles = StyleSheet.create({
+export default React.memo(BookCover);
+
+const getStyles = (colors) => StyleSheet.create({
   book: {
     width: 129,
     height: 199,
-    backgroundColor: "#212236",
+    backgroundColor: colors.surface,
     alignItems: "center",
     paddingTop: 10,
     borderRadius: 5,
@@ -51,7 +56,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   title: {
-    color: "#FDFDFD",
+    color: colors.textPrimary,
     opacity: 0.7,
     fontSize: 10,
     marginHorizontal: 15,
@@ -59,7 +64,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
   author: {
-    color: "#FFA919",
+    color: colors.accent,
     fontSize: 8,
     fontWeight: "700",
     paddingHorizontal: 15,

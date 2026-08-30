@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   TouchableOpacity,
@@ -16,9 +16,12 @@ import BookItem from "../components/BookItem";
 import { useSelector, useDispatch } from "react-redux";
 //import bookList from "../Data/bookList";
 import categoryList from "../Data/categoryList";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function SearchScreen({ nav }) {
   const bookList = [...useSelector((state) => state.bookReducer.bookList)];
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
   const [selectedCategory, setCategory] = useState("");
   const [books, setBooks] = useState(bookList);
@@ -54,7 +57,7 @@ export default function SearchScreen({ nav }) {
         styles.category,
         {
           backgroundColor:
-            selectedCategory === item.name ? "#FFFAF3" : "#F56C26",
+            selectedCategory === item.name ? colors.ctaContrast : colors.cta,
         },
       ]}
       onPress={() => changeCategory(item.name)}
@@ -62,7 +65,7 @@ export default function SearchScreen({ nav }) {
       <Text
         style={[
           styles.categoryName,
-          { color: selectedCategory === item.name ? "#F56C26" : "white" },
+          { color: selectedCategory === item.name ? colors.cta : colors.ctaContrast },
         ]}
       >
         {item.name}
@@ -80,21 +83,21 @@ export default function SearchScreen({ nav }) {
   );
 
   return (
-    <View style={{ backgroundColor: "#333447", height: "100%" }}>
+    <View style={{ backgroundColor: colors.background, height: "100%" }}>
       <View style={styles.search}>
         <View
           style={
             clicked ? styles.searchBar_clicked : styles.searchBar_unclicked
           }
         >
-          <Ionicons name="search-sharp" size={24} color="#E9E9EB" />
+          <Ionicons name="search-sharp" size={24} color={colors.textSecondary} />
           <TextInput
             style={styles.textInput}
             onChangeText={(text) => searchFilterFunction(text)}
             value={search}
             underlineColorAndroid="transparent"
             placeholder="Search Here"
-            placeholderTextColor={"#807D7D"}
+            placeholderTextColor={colors.placeholder}
             onFocus={() => {
               setClicked(true);
             }}
@@ -103,7 +106,7 @@ export default function SearchScreen({ nav }) {
             <Entypo
               name="cross"
               size={20}
-              color="white"
+              color={colors.textPrimary}
               style={{ padding: 1 }}
               onPress={() => {
                 searchFilterFunction("");
@@ -146,11 +149,11 @@ export default function SearchScreen({ nav }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 8,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
     paddingBottom: 60,
   },
   categoryList: {
@@ -169,7 +172,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
   },
   search: {
-    backgroundColor: "#212236",
+    backgroundColor: colors.surface,
     height: 56,
     width: "100%",
     flexDirection: "row",
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
   },
   searchBar_clicked: {
     flexDirection: "row",
-    backgroundColor: "#3A3B4D",
+    backgroundColor: colors.surfaceAlt,
     width: "75%",
     height: 38,
     borderRadius: 18,
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
   },
   searchBar_unclicked: {
     flexDirection: "row",
-    backgroundColor: "#3A3B4D",
+    backgroundColor: colors.surfaceAlt,
     width: "90%",
     height: 38,
     borderRadius: 18,
@@ -199,7 +202,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 18,
     width: "85%",
-    color: "white",
+    color: colors.textPrimary,
   },
   loader: {
     position: "absolute",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,54 +11,38 @@ import {
 import Rating from "../components/Rating";
 import { FontAwesome } from "@expo/vector-icons";
 
-// AUDIO imports
-import { Audio } from "expo-av";
+import { useAudioPlayer } from "expo-audio";
 import { AntDesign } from "@expo/vector-icons";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addCart, deleteCart } from "../redux/actions/cart";
+import { addCart } from "../redux/actions/cart";
+import { incrementCartItem } from "../redux/cartUtils";
 import { addFavourite, deleteFavourite } from "../redux/actions/favourite";
 import { db } from "../../firebase";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { useTheme } from "../theme/ThemeContext";
+
+const audioSource = require("../../assets/AudioSample.mp3");
 
 export default function BookDetailsScreen({ route, navigation }) {
-  // AUDIO
   const [isPlaying, setAudioState] = useState(false);
-  const [sound, setSound] = React.useState();
+  const player = useAudioPlayer(audioSource);
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
 
-  useEffect(() => {
-    loadAudio();
-  }, []);
-
-  const loadAudio = async () => {
-    console.log("Loading Sound");
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../assets/AudioSample.mp3")
-    );
-    setSound(sound);
-    //console.log('Playing Sound');
-    //await sound.playAsync();
-  };
-
-  const unloadAudio = async () => {
-    sound.unloadAsync();
-  };
-
-  async function playSound() {
-    await sound.playAsync();
-  }
-
-  async function stopSound() {
-    await sound.pauseAsync();
+  function togglePlayback() {
+    if (isPlaying) {
+      player.pause();
+    } else {
+      player.play();
+    }
+    setAudioState(!isPlaying);
   }
 
   // Redux & firebase actions
-  const addToCartFB = async (key) => {
-    console.log(key);
+  const syncCartFB = async (items) => {
     const cartRef = doc(db, "Cart", "0");
-    await updateDoc(cartRef, {
-      books: arrayUnion(key),
-    });
+    await updateDoc(cartRef, { items });
   };
 
   const addToFavouriteFB = async (key) => {
@@ -66,14 +50,6 @@ export default function BookDetailsScreen({ route, navigation }) {
     const cartRef = doc(db, "Favourite", "0");
     await updateDoc(cartRef, {
       books: arrayUnion(key),
-    });
-  };
-
-  const removeFromCartFB = async (key) => {
-    console.log(key);
-    const cartRef = doc(db, "Cart", "0");
-    await updateDoc(cartRef, {
-      books: arrayRemove(key),
     });
   };
 
@@ -87,14 +63,6 @@ export default function BookDetailsScreen({ route, navigation }) {
 
   //Dispatcher
   const dispatch = useDispatch();
-  const addToCart = (key) => {
-    dispatch(addCart(key));
-    addToCartFB(key);
-  };
-  const removeFromCart = (key) => {
-    dispatch(deleteCart(key));
-    removeFromCartFB(key);
-  };
   const addToFavourite = (key) => {
     dispatch(addFavourite(key));
     addToFavouriteFB(key);
@@ -111,8 +79,14 @@ export default function BookDetailsScreen({ route, navigation }) {
 
   const { item } = route.params;
   const [marked, setMarked] = useState(favouriteList.includes(item.id));
-  const [carted, setCarted] = useState(cartList.includes(item.id));
-  // console.log("Item loaded");
+  const [justAdded, setJustAdded] = useState(false);
+  const addedTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (addedTimeoutRef.current) clearTimeout(addedTimeoutRef.current);
+    };
+  }, []);
 
   // Changed by redux
   const addToWishList = () => {
@@ -123,13 +97,14 @@ export default function BookDetailsScreen({ route, navigation }) {
       removeFromFavourite(item.id);
     }
   };
-  const addToCartList = () => {
-    setCarted(!carted);
-    if (!carted) {
-      addToCart(item.id);
-    } else {
-      removeFromCart(item.id);
-    }
+  const handleAddToCart = () => {
+    const nextCartList = incrementCartItem(cartList, item.id);
+    dispatch(addCart(item.id));
+    syncCartFB(nextCartList);
+
+    setJustAdded(true);
+    if (addedTimeoutRef.current) clearTimeout(addedTimeoutRef.current);
+    addedTimeoutRef.current = setTimeout(() => setJustAdded(false), 1500);
   };
 
   return (
@@ -153,7 +128,7 @@ export default function BookDetailsScreen({ route, navigation }) {
               <Image source={require("../../assets/audio.png")} />
               <Text
                 style={{
-                  color: "#694AF1",
+                  color: colors.highlight,
                   fontSize: 16,
                   marginLeft: 10,
                 }}
@@ -178,60 +153,59 @@ export default function BookDetailsScreen({ route, navigation }) {
           <FontAwesome
             name={marked ? "bookmark" : "bookmark-o"}
             size={36}
-            color="#F56C26"
+            color={colors.cta}
           />
         </TouchableOpacity>
       </View>
 
       <View style={styles.main}>
         <View style={styles.description}>
-          <Text style={{ color: "white", fontSize: 18 }}>Description</Text>
+          <Text style={{ color: colors.textPrimary, fontSize: 18 }}>Description</Text>
           <TouchableOpacity
             style={[
               styles.control,
               { transform: item.audio ? [{ scale: 1 }] : [{ scale: 0 }] },
             ]}
-            onPress={() => {
-              if (!isPlaying) {
-                playSound();
-              } else {
-                stopSound();
-              }
-              setAudioState(!isPlaying);
-            }}
+            onPress={togglePlayback}
           >
-            <Text style={{ color: "#fff", fontSize: 16 }}>Listen preview </Text>
+            <Text style={{ color: colors.ctaContrast, fontSize: 16 }}>Listen preview </Text>
             {isPlaying ? (
-              <AntDesign name="pause" size={24} color="white" />
+              <AntDesign name="pause" size={24} color={colors.ctaContrast} />
             ) : (
-              <AntDesign name="caretright" size={24} color="white" />
+              <AntDesign name="caret-right" size={24} color={colors.ctaContrast} />
             )}
           </TouchableOpacity>
         </View>
 
         <View style={{ height: "58%" }}>
           <ScrollView>
-            <Text style={{ color: "white", fontSize: 16 }}>
+            <Text style={{ color: colors.textPrimary, fontSize: 16 }}>
               {item.description}
             </Text>
           </ScrollView>
         </View>
 
-        <TouchableOpacity style={styles.toCartBtn} onPress={addToCartList}>
-          <Text style={{ color: "white", fontSize: 18 }}>Add to cart</Text>
+        <TouchableOpacity
+          style={[styles.toCartBtn, justAdded && { backgroundColor: colors.highlight }]}
+          onPress={handleAddToCart}
+          disabled={justAdded}
+        >
+          <Text style={{ color: colors.ctaContrast, fontSize: 18 }}>
+            {justAdded ? "Added ✓" : "Add to cart"}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#333447",
+    backgroundColor: colors.background,
   },
   head: {
-    backgroundColor: "#212237",
+    backgroundColor: colors.surface,
     height: "34%",
     width: "100%",
     paddingBottom: 15,
@@ -253,7 +227,7 @@ const styles = StyleSheet.create({
   },
   audio: {
     width: 85,
-    backgroundColor: "white",
+    backgroundColor: colors.ctaContrast,
     opacity: 0.9,
     borderRadius: 5,
     flexDirection: "row",
@@ -262,7 +236,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   control: {
-    backgroundColor: "#F5AA34",
+    backgroundColor: colors.accent,
     borderRadius: 5,
     display: "flex",
     flexDirection: "row",
@@ -271,15 +245,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   title: {
-    color: "white",
+    color: colors.textPrimary,
     fontSize: 16,
   },
   author: {
-    color: "#F5AC39",
+    color: colors.accent,
     fontSize: 14,
   },
   price: {
-    color: "white",
+    color: colors.textPrimary,
     fontSize: 16,
     marginBottom: 5,
     marginTop: 5,
@@ -299,7 +273,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   toCartBtn: {
-    backgroundColor: "#F56C26",
+    backgroundColor: colors.cta,
     width: 160,
     height: 50,
     borderRadius: 5,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,10 +8,21 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/actions/user";
+import { useTheme } from "../theme/ThemeContext";
 
 export default function SignInScreen({ navigation }) {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+  const [login, setLogin] = useState("user1@test.au");
+  const [password, setPassword] = useState("audible");
+  const { colors } = useTheme();
+  const styles = useMemo(() => getStyles(colors), [colors]);
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    dispatch(setUser(login));
+    navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -21,26 +32,23 @@ export default function SignInScreen({ navigation }) {
           <Text style={styles.inputText}>Username</Text>
           <TextInput
             style={styles.input}
-            onChange={(text) => setLogin(text)}
-            value="user1@test.au"
+            onChangeText={setLogin}
+            value={login}
           />
         </View>
         <View style={styles.inputPassword}>
           <Text style={styles.inputText}>Password</Text>
           <TextInput
             style={styles.input}
-            onChange={(text) => setPassword(text)}
-            value="audible"
+            onChangeText={setPassword}
+            value={password}
             secureTextEntry
           />
         </View>
       </View>
       <View style={styles.btn}>
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() => navigation.navigate("Tabs")}
-        >
-          <Text style={{ color: "white", textTransform: "uppercase" }}>
+        <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
+          <Text style={{ color: colors.ctaContrast, textTransform: "uppercase" }}>
             Login
           </Text>
         </TouchableOpacity>
@@ -52,15 +60,14 @@ export default function SignInScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
-    backgroundColor: "#212237",
+    backgroundColor: colors.surface,
   },
   title: {
-    color: "white",
+    color: colors.textPrimary,
     fontSize: 24,
     top: "20%",
   },
@@ -69,14 +76,14 @@ const styles = StyleSheet.create({
     top: "35%",
   },
   input: {
-    borderBottomColor: "#999AA3",
+    borderBottomColor: colors.textSecondary,
     borderBottomWidth: 1,
     fontSize: 18,
-    color: "#B1B2B9",
+    color: colors.textMuted,
   },
   inputText: {
     fontSize: 10,
-    color: "#999AA3",
+    color: colors.textSecondary,
     textTransform: "uppercase",
     marginBottom: 12,
   },
@@ -90,15 +97,14 @@ const styles = StyleSheet.create({
   loginBtn: {
     width: 285,
     height: 40,
-    backgroundColor: "#F56C26",
-    color: "white",
+    backgroundColor: colors.cta,
     borderRadius: 5,
     alignItems: "center",
     justifyContent: "center",
   },
   createBtn: {
     fontSize: 16,
-    color: "#999AA3",
+    color: colors.textSecondary,
     marginTop: 25,
   },
 });

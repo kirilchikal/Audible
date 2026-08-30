@@ -12,6 +12,7 @@ import CartScreen from "../views/CartScreen";
 import HomeHeader from "../components/HomeHeader";
 import BaseHeader from "../components/BaseHeader";
 import SearchHeader from "../components/SearchHeader";
+import { useTheme } from "../theme/ThemeContext";
 
 const Tab = createBottomTabNavigator();
 
@@ -20,6 +21,7 @@ export default function Tabs({ navigation }) {
   const toogleAudio = () => {
     setAudio((previousState) => !previousState);
   };
+  const { colors } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -28,7 +30,7 @@ export default function Tabs({ navigation }) {
         tabBarStyle: {
           height: 65,
           paddingTop: 4,
-          backgroundColor: "#212237",
+          backgroundColor: colors.surface,
           borderTopWidth: 0,
         },
       }}
@@ -42,11 +44,13 @@ export default function Tabs({ navigation }) {
               <Feather
                 name="home"
                 size={32}
-                color={focused ? "#F5A932" : "#666666"}
+                color={focused ? colors.accent : colors.tabInactive}
               />
             </View>
           ),
-          header: () => <HomeHeader audio={audio} toogle={toogleAudio} />,
+          header: () => (
+            <HomeHeader audio={audio} toogle={toogleAudio} navigation={navigation} />
+          ),
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -58,11 +62,11 @@ export default function Tabs({ navigation }) {
               <Ionicons
                 name="search-sharp"
                 size={32}
-                color={focused ? "#F5A932" : "#666666"}
+                color={focused ? colors.accent : colors.tabInactive}
               />
             </View>
           ),
-          header: () => <SearchHeader />,
+          header: () => <SearchHeader navigation={navigation} />,
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -74,11 +78,11 @@ export default function Tabs({ navigation }) {
               <Feather
                 name="bookmark"
                 size={32}
-                color={focused ? "#F5A932" : "#666666"}
+                color={focused ? colors.accent : colors.tabInactive}
               />
             </View>
           ),
-          header: () => <BaseHeader title={"Whish List"} />,
+          header: () => <BaseHeader title={"Whish List"} navigation={navigation} />,
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -88,13 +92,13 @@ export default function Tabs({ navigation }) {
           tabBarIcon: ({ focused }) => (
             <View>
               <AntDesign
-                name="shoppingcart"
+                name="shopping-cart"
                 size={32}
-                color={focused ? "#F5A932" : "#666666"}
+                color={focused ? colors.accent : colors.tabInactive}
               />
             </View>
           ),
-          header: () => <BaseHeader title={"Your Cart"} />,
+          header: () => <BaseHeader title={"Your Cart"} navigation={navigation} />,
         }}
       ></Tab.Screen>
     </Tab.Navigator>
