@@ -6,8 +6,11 @@ export default function BookItem(props) {
   const { colors } = useTheme();
   const styles = useMemo(() => getStyles(colors), [colors]);
 
-  const removeBook = () => {
-    props.remove(props.item.id);
+  const increment = () => {
+    props.onIncrement(props.item.id);
+  };
+  const decrement = () => {
+    props.onDecrement(props.item.id);
   };
 
   return (
@@ -29,9 +32,15 @@ export default function BookItem(props) {
           }}
           source={require("../../assets/audio.png")}
         />
-        <TouchableOpacity onPress={removeBook}>
-          <Text style={styles.removeBtn}>Remove</Text>
-        </TouchableOpacity>
+        <View style={styles.stepper}>
+          <TouchableOpacity style={styles.stepperBtn} onPress={decrement} hitSlop={8}>
+            <Text style={styles.stepperBtnText}>−</Text>
+          </TouchableOpacity>
+          <Text style={styles.qty}>{props.qty}</Text>
+          <TouchableOpacity style={styles.stepperBtn} onPress={increment} hitSlop={8}>
+            <Text style={styles.stepperBtnText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -88,13 +97,27 @@ const getStyles = (colors) => StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 15,
   },
-  removeBtn: {
+  stepper: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: colors.cta,
-    color: colors.ctaContrast,
-    fontSize: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    overflow: "hidden",
     borderRadius: 5,
+    overflow: "hidden",
+  },
+  stepperBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  stepperBtnText: {
+    color: colors.ctaContrast,
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  qty: {
+    color: colors.ctaContrast,
+    fontSize: 14,
+    fontWeight: "600",
+    minWidth: 18,
+    textAlign: "center",
   },
 });

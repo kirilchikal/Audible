@@ -90,7 +90,7 @@ export default function Tabs({ navigation }) {
           tabBarIcon: ({ focused }) => (
             <View>
               <AntDesign
-                name="shoppingcart"
+                name="shopping-cart"
                 size={32}
                 color={focused ? colors.accent : colors.tabInactive}
               />

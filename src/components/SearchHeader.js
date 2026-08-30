@@ -11,9 +11,6 @@ export default function SearchHeader() {
         <View style={styles.header}>
             <Text style={styles.text}>Search</Text>
             <ThemeToggleButton />
-            <View style={styles.search}>
-
-            </View>
         </View>
     );
 }
@@ -31,8 +28,5 @@ const getStyles = (colors) => StyleSheet.create({
     text: {
         fontSize: 24,
         color: colors.textPrimary,
-    },
-    search: {
-
     }
 });

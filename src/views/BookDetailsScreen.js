@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,7 +15,8 @@ import { useAudioPlayer } from "expo-audio";
 import { AntDesign } from "@expo/vector-icons";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addCart, deleteCart } from "../redux/actions/cart";
+import { addCart } from "../redux/actions/cart";
+import { incrementCartItem } from "../redux/cartUtils";
 import { addFavourite, deleteFavourite } from "../redux/actions/favourite";
 import { db } from "../../firebase";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
@@ -39,12 +40,9 @@ export default function BookDetailsScreen({ route, navigation }) {
   }
 
   // Redux & firebase actions
-  const addToCartFB = async (key) => {
-    console.log(key);
+  const syncCartFB = async (items) => {
     const cartRef = doc(db, "Cart", "0");
-    await updateDoc(cartRef, {
-      books: arrayUnion(key),
-    });
+    await updateDoc(cartRef, { items });
   };
 
   const addToFavouriteFB = async (key) => {
@@ -52,14 +50,6 @@ export default function BookDetailsScreen({ route, navigation }) {
     const cartRef = doc(db, "Favourite", "0");
     await updateDoc(cartRef, {
       books: arrayUnion(key),
-    });
-  };
-
-  const removeFromCartFB = async (key) => {
-    console.log(key);
-    const cartRef = doc(db, "Cart", "0");
-    await updateDoc(cartRef, {
-      books: arrayRemove(key),
     });
   };
 
@@ -73,14 +63,6 @@ export default function BookDetailsScreen({ route, navigation }) {
 
   //Dispatcher
   const dispatch = useDispatch();
-  const addToCart = (key) => {
-    dispatch(addCart(key));
-    addToCartFB(key);
-  };
-  const removeFromCart = (key) => {
-    dispatch(deleteCart(key));
-    removeFromCartFB(key);
-  };
   const addToFavourite = (key) => {
     dispatch(addFavourite(key));
     addToFavouriteFB(key);
@@ -97,8 +79,14 @@ export default function BookDetailsScreen({ route, navigation }) {
 
   const { item } = route.params;
   const [marked, setMarked] = useState(favouriteList.includes(item.id));
-  const [carted, setCarted] = useState(cartList.includes(item.id));
-  // console.log("Item loaded");
+  const [justAdded, setJustAdded] = useState(false);
+  const addedTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (addedTimeoutRef.current) clearTimeout(addedTimeoutRef.current);
+    };
+  }, []);
 
   // Changed by redux
   const addToWishList = () => {
@@ -109,13 +97,14 @@ export default function BookDetailsScreen({ route, navigation }) {
       removeFromFavourite(item.id);
     }
   };
-  const addToCartList = () => {
-    setCarted(!carted);
-    if (!carted) {
-      addToCart(item.id);
-    } else {
-      removeFromCart(item.id);
-    }
+  const handleAddToCart = () => {
+    const nextCartList = incrementCartItem(cartList, item.id);
+    dispatch(addCart(item.id));
+    syncCartFB(nextCartList);
+
+    setJustAdded(true);
+    if (addedTimeoutRef.current) clearTimeout(addedTimeoutRef.current);
+    addedTimeoutRef.current = setTimeout(() => setJustAdded(false), 1500);
   };
 
   return (
@@ -196,8 +185,14 @@ export default function BookDetailsScreen({ route, navigation }) {
           </ScrollView>
         </View>
 
-        <TouchableOpacity style={styles.toCartBtn} onPress={addToCartList}>
-          <Text style={{ color: colors.ctaContrast, fontSize: 18 }}>Add to cart</Text>
+        <TouchableOpacity
+          style={[styles.toCartBtn, justAdded && { backgroundColor: colors.highlight }]}
+          onPress={handleAddToCart}
+          disabled={justAdded}
+        >
+          <Text style={{ color: colors.ctaContrast, fontSize: 18 }}>
+            {justAdded ? "Added ✓" : "Add to cart"}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

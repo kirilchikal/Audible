@@ -16,7 +16,7 @@ import { collection, getDocs } from "firebase/firestore";
 
 import BookCover from "../components/BookCover";
 import { addBook } from "../redux/actions/book";
-import { addCart } from "../redux/actions/cart";
+import { setCart } from "../redux/actions/cart";
 import { addFavourite } from "../redux/actions/favourite";
 import { useTheme } from "../theme/ThemeContext";
 
@@ -50,8 +50,8 @@ function getBookRating(documentSnapshot) {
   return documentSnapshot.get("rating");
 }
 
-function getCartBooks(documentSnapshot) {
-  return documentSnapshot.get("books");
+function getCartItems(documentSnapshot) {
+  return documentSnapshot.get("items");
 }
 
 function getFavouriteBooks(documentSnapshot) {
@@ -87,9 +87,9 @@ export default function HomeScreen(props) {
     const snapshot = await getDocs(collection(db, "Cart"));
     const carts = [];
     snapshot.docs.forEach((item) => {
-      carts.push(getCartBooks(item));
+      carts.push(getCartItems(item));
     });
-    carts[0].forEach((bookId) => dispatch(addCart(bookId)));
+    dispatch(setCart(carts[0] ?? []));
   };
 
   const fetchFavourite = async () => {
@@ -215,7 +215,8 @@ const getStyles = (colors) => StyleSheet.create({
     marginTop: 10,
   },
   scrollTitle: {
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: "600",
     color: colors.textPrimary,
     marginLeft: 15,
   },

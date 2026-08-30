@@ -10,47 +10,55 @@ import {
 
 import BookItemCart from "../components/BookItemCart";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteCart } from "../redux/actions/cart";
+import { addCart, deleteCart } from "../redux/actions/cart";
+import { incrementCartItem, decrementCartItem, getCartQty } from "../redux/cartUtils";
 import { db } from "../../firebase";
-import { doc, updateDoc, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { useTheme } from "../theme/ThemeContext";
 
 export default function CartScreen({ navigation }) {
   const { colors } = useTheme();
   const styles = useMemo(() => getStyles(colors), [colors]);
-  //Redux
-  const removeFromCartFB = async (key) => {
-    console.log(key);
+
+  const syncCartFB = async (items) => {
     const cartRef = doc(db, "Cart", "0");
-    await updateDoc(cartRef, {
-      books: arrayRemove(key),
-    });
+    await updateDoc(cartRef, { items });
   };
 
   const cartList = useSelector((state) => state.cartReducer.cartList);
   const booksList = useSelector((state) => state.bookReducer.bookList);
-  const books = booksList.filter((book) => cartList.includes(book.id));
+  const books = booksList.filter((book) =>
+    cartList.some((entry) => entry.id === book.id)
+  );
 
   //Dispatcher
   const dispatch = useDispatch();
-  const removeFromCart = (key) => {
-    dispatch(deleteCart(key));
-    removeFromCartFB(key);
+  const incrementItem = (key) => {
+    dispatch(addCart(key));
+    syncCartFB(incrementCartItem(cartList, key));
   };
-  //
+  const decrementItem = (key) => {
+    dispatch(deleteCart(key));
+    syncCartFB(decrementCartItem(cartList, key));
+  };
 
   const renderBook = ({ item }) => (
     <TouchableOpacity
       style={{ marginBottom: 10 }}
       onPress={() => navigation.navigate("BookDetailsScreen", { item })}
     >
-      <BookItemCart item={item} remove={removeFromCart}></BookItemCart>
+      <BookItemCart
+        item={item}
+        qty={getCartQty(cartList, item.id)}
+        onIncrement={incrementItem}
+        onDecrement={decrementItem}
+      ></BookItemCart>
     </TouchableOpacity>
   );
 
   const countSum = () => {
     return books
-      .map((book) => book.price)
+      .map((book) => book.price * getCartQty(cartList, book.id))
       .reduce((prev, curr) => prev + curr, 0);
   };
 

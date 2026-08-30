@@ -1,4 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import SignInScreen from "../views/SignInScreen";
 import SignUpScreen from "../views/SignUpScreen";
@@ -31,15 +33,24 @@ export default function RootStackScreen({ navigation }) {
       <RootStack.Screen
         name="BookDetailsScreen"
         component={BookDetailsScreen}
-        options={{
+        options={({ navigation }) => ({
           headerBackButtonMenuEnabled: false,
+          headerBackVisible: false,
           title: "",
           headerTintColor: colors.textPrimary,
           headerStyle: {
             backgroundColor: colors.surface,
             shadowColor: "transparent",
           },
-        }}
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Tabs")}
+              hitSlop={10}
+            >
+              <Ionicons name="arrow-back" size={26} color={colors.textPrimary} />
+            </TouchableOpacity>
+          ),
+        })}
       ></RootStack.Screen>
     </RootStack.Navigator>
   );

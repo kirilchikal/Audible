@@ -50,7 +50,7 @@ async function seed() {
   }
 
   console.log('Seeding empty "Cart"/"Favourite" docs (id "0")...');
-  await setDoc(doc(db, "Cart", "0"), { books: [] });
+  await setDoc(doc(db, "Cart", "0"), { items: [] });
   await setDoc(doc(db, "Favourite", "0"), { books: [] });
 
   console.log("Done.");
