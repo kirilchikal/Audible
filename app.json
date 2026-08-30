@@ -26,7 +26,6 @@
     "plugins": [
       "expo-asset",
       "expo-audio",
-      "expo-status-bar",
       [
         "expo-splash-screen",
         {
@@ -34,7 +33,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }
